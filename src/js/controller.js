@@ -1,6 +1,7 @@
 "use strict";
 import "core-js/stable";
 import "regenerator-runtime";
+import chalk from "chalk";
 
 import * as model from "./model";
 import recipeView from "./views/recipeView";
@@ -20,7 +21,7 @@ const showRecipe = async function () {
     // Rendering the recipe
     recipeView.render(recipe);
   } catch (err) {
-    alert(err);
+    console.log(chalk.red(err));
   }
 };
 

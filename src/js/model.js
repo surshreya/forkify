@@ -1,4 +1,7 @@
 import { async } from "regenerator-runtime";
+import chalk from "chalk";
+import { API_URL } from "./config";
+import { getJSON } from "./helpers";
 
 /**
  * STATE Object
@@ -13,12 +16,7 @@ export const state = {
  */
 export const loadRecipe = async (id) => {
   try {
-    const result = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
-    );
-    const data = await result.json();
-
-    if (!result.ok) throw new Error(`${data.message}`);
+    const data = await getJSON(`${API_URL}/${id}`);
 
     let { recipe } = data.data;
 
@@ -33,6 +31,6 @@ export const loadRecipe = async (id) => {
       imageUrl: recipe.image_url,
     };
   } catch (err) {
-    alert(err);
+    console.log(chalk.red(err));
   }
 };
