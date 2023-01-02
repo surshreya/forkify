@@ -6,6 +6,8 @@ import chalk from "chalk";
 import * as model from "./model";
 import recipeView from "./views/recipeView";
 import searchView from "./views/searchView";
+import resultsView from "./views/resultsView";
+
 import { async } from "regenerator-runtime";
 
 const controlRecipes = async function () {
@@ -30,7 +32,9 @@ const controlRecipes = async function () {
 
 const controlSearchResults = async () => {
   try {
+    resultsView.renderSpinner();
     // Get Search Query
+
     const query = searchView.getQuery();
     if (!query) return;
 
@@ -38,7 +42,7 @@ const controlSearchResults = async () => {
     await model.loadSearchResults(query);
 
     // Render the result
-    console.log(model.state);
+    resultsView.render(model.state.search.results);
   } catch (err) {
     console.log(chalk.red(err));
   }
