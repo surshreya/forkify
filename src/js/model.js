@@ -32,5 +32,6 @@ export const loadRecipe = async (id) => {
     };
   } catch (err) {
     console.log(chalk.red(err));
+    throw err;
   }
 };

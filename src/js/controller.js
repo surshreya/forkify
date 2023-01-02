@@ -6,7 +6,7 @@ import chalk from "chalk";
 import * as model from "./model";
 import recipeView from "./views/recipeView";
 
-const showRecipe = async function () {
+const controlRecipes = async function () {
   try {
     // Loading the Recipe
     const id = window.location.hash.slice(1);
@@ -22,11 +22,12 @@ const showRecipe = async function () {
     recipeView.render(recipe);
   } catch (err) {
     console.log(chalk.red(err));
+    recipeView.renderError();
   }
 };
 
 const init = () => {
-  recipeView.addHandlerRender(showRecipe); //SUBSCRIBER, reacting to the events
+  recipeView.addHandlerRender(controlRecipes); //SUBSCRIBER, reacting to the events
 };
 
 init();
