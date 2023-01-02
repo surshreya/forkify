@@ -25,4 +25,8 @@ const showRecipe = async function () {
   }
 };
 
-["load", "hashchange"].forEach((ev) => window.addEventListener(ev, showRecipe));
+const init = () => {
+  recipeView.addHandlerRender(showRecipe); //SUBSCRIBER, reacting to the events
+};
+
+init();

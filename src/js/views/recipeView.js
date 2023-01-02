@@ -12,6 +12,16 @@ class RecipeView {
     this.#parentEl.insertAdjacentHTML("afterbegin", markup);
   }
 
+  /**
+   * PUBLISHER, listening for events
+   * @param {Callback Function} handler
+   */
+  addHandlerRender(handler) {
+    ["load", "hashchange"].forEach((ev) =>
+      window.addEventListener(ev, handler)
+    );
+  }
+
   renderSpinner = () => {
     const markup = `
       <div class="spinner">
