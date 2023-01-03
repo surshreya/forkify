@@ -76,3 +76,15 @@ export const getSearchResultPage = (page = state.search.page) => {
 
   return state.search.results.slice(start, end);
 };
+
+/**
+ * Updates the loaded recipe's ingredients quantity
+ * @param {Number} newServings
+ */
+export const updateServings = (newServings) => {
+  const { servings } = state.recipe;
+  state.recipe.ingredients.forEach((ing) => {
+    ing.quantity = (ing.quantity * newServings) / servings;
+  });
+  state.recipe.servings = newServings;
+};
