@@ -14,6 +14,7 @@ export const state = {
     page: 1,
     resultsPerPage: RES_PER_PAGE,
   },
+  bookmarks: [],
 };
 
 /**
@@ -36,6 +37,12 @@ export const loadRecipe = async (id) => {
       publisher: recipe.publisher,
       imageUrl: recipe.image_url,
     };
+
+    if (state.bookmarks.some((bookmark) => bookmark.id === state.recipe.id)) {
+      state.recipe.isBookmarked = true;
+    } else {
+      state.recipe.isBookmarked = false;
+    }
   } catch (err) {
     console.log(chalk.red(err));
     throw err;
@@ -89,4 +96,31 @@ export const updateServings = (newServings) => {
     ing.quantity = (ing.quantity * newServings) / servings;
   });
   state.recipe.servings = newServings;
+};
+
+/**
+ * Adds recipe as a bookmark
+ * @param {Object} recipe
+ */
+export const addBookmark = (recipe) => {
+  state.bookmarks.push(recipe);
+
+  //Mark current recipe as a bookmark
+  if (state.recipe.id === recipe.id) {
+    state.recipe.isBookmarked = true;
+  }
+};
+
+/**
+ * Removes recipe as a bookmark
+ * @param {String} id
+ */
+export const deleteBookmark = (id) => {
+  const idx = state.bookmarks.findIndex((bookmark) => bookmark.id === id);
+  state.bookmarks.splice(idx, 1);
+
+  //Mark current recipe as NOT a bookmark
+  if (state.recipe.id === id) {
+    state.recipe.isBookmarked = false;
+  }
 };
