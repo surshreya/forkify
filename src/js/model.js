@@ -103,12 +103,15 @@ export const updateServings = (newServings) => {
  * @param {Object} recipe
  */
 export const addBookmark = (recipe) => {
+  //Add bookmark
   state.bookmarks.push(recipe);
 
   //Mark current recipe as a bookmark
   if (state.recipe.id === recipe.id) {
     state.recipe.isBookmarked = true;
   }
+
+  persistBookmarks();
 };
 
 /**
@@ -116,6 +119,7 @@ export const addBookmark = (recipe) => {
  * @param {String} id
  */
 export const deleteBookmark = (id) => {
+  //Delete bookmark
   const idx = state.bookmarks.findIndex((bookmark) => bookmark.id === id);
   state.bookmarks.splice(idx, 1);
 
@@ -123,4 +127,21 @@ export const deleteBookmark = (id) => {
   if (state.recipe.id === id) {
     state.recipe.isBookmarked = false;
   }
+
+  persistBookmarks();
 };
+
+const persistBookmarks = () => {
+  // Load data into the local storage
+  localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
+};
+
+const init = () => {
+  // Load data from the local storage
+  const storage = localStorage.getItem("bookmarks");
+  if (storage) {
+    state.bookmarks = JSON.parse(storage);
+  }
+};
+
+init();
