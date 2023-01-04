@@ -8,6 +8,7 @@ import recipeView from "./views/recipeView";
 import searchView from "./views/searchView";
 import resultsView from "./views/resultsView";
 import paginationView from "./views/paginationView";
+import bookmarksView from "./views/bookmarksView";
 
 import { async } from "regenerator-runtime";
 
@@ -18,6 +19,9 @@ const controlRecipes = async function () {
 
     // Update ResultsView to mark selected result
     resultsView.update(model.getSearchResultPage());
+
+    // Update BookmarksView to mark selected bookmark
+    bookmarksView.update(model.state.bookmarks);
 
     if (!id) return;
     // Render Spinner while response is fetched
@@ -81,6 +85,9 @@ const controlBookmarks = () => {
 
   // Rendering the recipe
   recipeView.update(model.state.recipe);
+
+  //Render bookmark list
+  bookmarksView.render(model.state.bookmarks);
 };
 
 const init = () => {
