@@ -24,17 +24,17 @@ const controlRecipes = async function () {
     // Render Spinner while response is fetched
     recipeView.renderSpinner();
 
-    // Update ResultsView to mark selected result
-    resultsView.update(model.getSearchResultPage());
-
-    // Update BookmarksView to mark selected bookmark
-    bookmarksView.update(model.state.bookmarks);
-
     await model.loadRecipe(id);
     const { recipe } = model.state;
 
     // Rendering the recipe
     recipeView.render(recipe);
+
+    // Update ResultsView to mark selected result
+    resultsView.update(model.getSearchResultPage());
+
+    // Update BookmarksView to mark selected bookmark
+    bookmarksView.update(model.state.bookmarks);
   } catch (err) {
     console.log(chalk.red(err));
     recipeView.renderError();
@@ -43,10 +43,8 @@ const controlRecipes = async function () {
 
 const controlSearchResults = async () => {
   try {
-    console.log("here");
     resultsView.renderSpinner();
     // Get Search Query
-
     const query = searchView.getQuery();
     if (!query) return;
 
@@ -111,6 +109,9 @@ const controlAddRecipe = async function (newRecipe) {
 
     // Success message
     addRecipeView.renderMessage();
+
+    // Change ID in URL
+    window.history.pushState(null, "", `#${model.state.recipe.id}`);
 
     //Close the Modal after submitting
     setTimeout(() => {

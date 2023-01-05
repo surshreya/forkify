@@ -1,7 +1,7 @@
 import { async } from "regenerator-runtime";
 import chalk from "chalk";
 import { API_URL, RES_PER_PAGE, KEY } from "./config";
-import { getJSON, sendJSON, createRecipeObject } from "./helpers";
+import { AJAX, createRecipeObject } from "./helpers";
 /**
  * STATE Object
  */
@@ -22,7 +22,7 @@ export const state = {
  */
 export const loadRecipe = async (id) => {
   try {
-    const data = await getJSON(`${API_URL}/${id}`);
+    const data = await AJAX(`${API_URL}/${id}?key=${KEY}`);
 
     state.recipe = createRecipeObject(data);
 
@@ -44,13 +44,14 @@ export const loadRecipe = async (id) => {
 export const loadSearchResults = async (query) => {
   try {
     state.search.query = query;
-    const data = await getJSON(`${API_URL}?search=${query}`);
+    const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
     state.search.results = data.data.recipes.map((recipe) => {
       return {
         id: recipe.id,
         title: recipe.title,
         publisher: recipe.publisher,
         imageUrl: recipe.image_url,
+        ...(recipe.key && { key: recipe.key }),
       };
     });
 
@@ -153,7 +154,7 @@ export const uploadRecipe = async (newRecipe) => {
       ingredients,
     };
 
-    const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+    const data = await AJAX(`${API_URL}?key=${KEY}`, recipe);
     state.recipe = createRecipeObject(data);
     addBookmark(state.recipe);
   } catch (err) {
