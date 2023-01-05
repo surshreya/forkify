@@ -21,3 +21,38 @@ export const getJSON = async (url) => {
     throw err;
   }
 };
+
+export const sendJSON = async (url, uploadData) => {
+  try {
+    const fetchPrmse = fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(uploadData),
+    });
+    const result = await Promise.race([fetchPrmse, timeout(TIMEOUT_SEC)]);
+    const data = await result.json();
+
+    if (!result.ok) throw new Error(`${data.message}`);
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const createRecipeObject = (data) => {
+  let { recipe } = data.data;
+
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    cookingTime: recipe.cooking_time,
+    servings: recipe.servings,
+    sourceUrl: recipe.source_url,
+    ingredients: recipe.ingredients,
+    publisher: recipe.publisher,
+    imageUrl: recipe.image_url,
+    ...(recipe.key && { key: recipe.key }),
+  };
+};

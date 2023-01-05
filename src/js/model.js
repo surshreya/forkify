@@ -1,8 +1,7 @@
 import { async } from "regenerator-runtime";
 import chalk from "chalk";
-import { API_URL, RES_PER_PAGE } from "./config";
-import { getJSON } from "./helpers";
-
+import { API_URL, RES_PER_PAGE, KEY } from "./config";
+import { getJSON, sendJSON, createRecipeObject } from "./helpers";
 /**
  * STATE Object
  */
@@ -25,18 +24,7 @@ export const loadRecipe = async (id) => {
   try {
     const data = await getJSON(`${API_URL}/${id}`);
 
-    let { recipe } = data.data;
-
-    state.recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      cookingTime: recipe.cooking_time,
-      servings: recipe.servings,
-      sourceUrl: recipe.source_url,
-      ingredients: recipe.ingredients,
-      publisher: recipe.publisher,
-      imageUrl: recipe.image_url,
-    };
+    state.recipe = createRecipeObject(data);
 
     if (state.bookmarks.some((bookmark) => bookmark.id === state.recipe.id)) {
       state.recipe.isBookmarked = true;
@@ -134,6 +122,43 @@ export const deleteBookmark = (id) => {
 const persistBookmarks = () => {
   // Load data into the local storage
   localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
+};
+
+/**
+ * Uploads the user's recipe via the API
+ * @param {Object} newRecipe
+ */
+export const uploadRecipe = async (newRecipe) => {
+  try {
+    const ingredients = Object.entries(newRecipe)
+      .filter((entry) => entry[0].startsWith("ingredient") && entry[1] !== "")
+      .map((ing) => {
+        const ingArr = ing[1].replaceAll(" ", "").split(",");
+        if (ingArr.length !== 3) {
+          throw new Error(
+            "Wrong ingredient format! Please use the correct format :)"
+          );
+        }
+        const [quantity, unit, description] = ingArr;
+        return { quantity: quantity ? +quantity : null, unit, description };
+      });
+
+    const recipe = {
+      title: newRecipe.title,
+      cooking_time: +newRecipe.cookingTime,
+      servings: +newRecipe.servings,
+      source_url: newRecipe.sourceUrl,
+      publisher: newRecipe.publisher,
+      image_url: newRecipe.image,
+      ingredients,
+    };
+
+    const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+    state.recipe = createRecipeObject(data);
+    addBookmark(state.recipe);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const init = () => {
