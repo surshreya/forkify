@@ -9,6 +9,7 @@ import searchView from "./views/searchView";
 import resultsView from "./views/resultsView";
 import paginationView from "./views/paginationView";
 import bookmarksView from "./views/bookmarksView";
+import addRecipeView from "./views/addRecipeView";
 
 import { async } from "regenerator-runtime";
 
@@ -96,6 +97,12 @@ const controlBookmarksView = function () {
   bookmarksView.render(model.state.bookmarks);
 };
 
+const controlAddRecipe = (newRecipe) => {
+  console.log(newRecipe);
+
+  addRecipeView.toggleWindow();
+};
+
 const init = () => {
   recipeView.addHandlerRender(controlRecipes); //SUBSCRIBER, reacting to the events
   recipeView.addHandlerUpdateServings(controlServings);
@@ -103,6 +110,7 @@ const init = () => {
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
   bookmarksView.addHandlerRender(controlBookmarksView);
+  addRecipeView.addHandlerUpload(controlAddRecipe);
 };
 
 init();
